@@ -11,17 +11,20 @@ from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_all
 
-spec_path = Path(globals().get("SPEC", __file__)).resolve()
+# PyInstaller executes this file with exec(), so __file__ does not exist.
+# SPEC is the absolute path of this spec, injected into the namespace.
+spec_path = Path(SPEC).resolve()
 project_root = spec_path.parent.parent
 platform_name = {"win32": "windows", "darwin": "macos"}.get(sys.platform, "linux")
 
-try:
-    import PyInstaller.config as pyinstaller_config
+import PyInstaller.config as pyinstaller_config
 
-    pyinstaller_config.CONF["distpath"] = str(project_root / "dist" / platform_name)
-    pyinstaller_config.CONF["workpath"] = str(project_root / "build" / platform_name)
-except Exception:
-    pass
+dist_dir = project_root / "dist" / platform_name
+work_dir = project_root / "build" / platform_name
+dist_dir.mkdir(parents=True, exist_ok=True)
+work_dir.mkdir(parents=True, exist_ok=True)
+pyinstaller_config.CONF["distpath"] = str(dist_dir)
+pyinstaller_config.CONF["workpath"] = str(work_dir)
 
 datas, binaries, hiddenimports = collect_all("textual")
 

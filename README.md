@@ -31,7 +31,24 @@ pytest
 python -m reimage
 ```
 
-La guía de instalación está en [`docs/guides/install.md`](docs/guides/install.md). El diseño del programa está en [`docs/guides/ARCHITECTURE.md`](docs/guides/ARCHITECTURE.md).
+La guía de instalación está en [`docs/guides/install.md`](docs/guides/install.md). El diseño del programa está en [`docs/guides/ARCHITECTURE.md`](docs/guides/ARCHITECTURE.md). Las funciones previstas para endurecerlo y escalarlo están en [`docs/guides/features.md`](docs/guides/features.md).
+
+### Instalador de Windows
+
+Primero se congela el programa y después se instala para el usuario actual. El instalador pregunta si ReImage debe aparecer al hacer clic derecho sobre una carpeta.
+
+```bash
+python -m PyInstaller packaging/reimage.spec
+powershell -ExecutionPolicy Bypass -File packaging\install-windows.ps1
+```
+
+La entrada del menú se llama **Rename images with ReImage**. Abre la TUI con esa carpeta ya escrita y no renombra nada hasta que se confirme la vista previa. También aparece al hacer clic derecho en el fondo de una ventana de carpeta. Para quitar el programa y esas entradas:
+
+```bash
+powershell -ExecutionPolicy Bypass -File packaging\install-windows.ps1 -Uninstall
+```
+
+`packaging/reimage.iss` es el mismo instalador como asistente gráfico, con la casilla del menú contextual marcada por defecto. Se compila con [Inno Setup](https://jrsoftware.org/isinfo.php): `iscc packaging\reimage.iss`. El ejecutable queda en `dist\windows\ReImage-Setup.exe`.
 
 ## Uso
 
@@ -68,5 +85,6 @@ python -m reimage --undo --folder RUTA
 - Orden por creación, modificación o nombre. Separador, ancho y número inicial configurables.
 - Las últimas cinco carpetas, guardadas en el directorio de datos del usuario.
 - Ejecutable de consola con PyInstaller. Pasos en [`docs/guides/release.md`](docs/guides/release.md).
+- Instalador de Windows por usuario, con la opción de agregar el programa al menú contextual de las carpetas.
 
 Quedan fuera de esta versión las subcarpetas recursivas, el selector de archivos del sistema, arrastrar y soltar, el orden por fecha EXIF, las plantillas libres y la actualización automática.
